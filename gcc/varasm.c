@@ -1016,7 +1016,8 @@ align_variable (tree decl, bool dont_output_data)
       align = MAX_OFILE_ALIGNMENT;
     }
 
-  if (! DECL_USER_ALIGN (decl))
+  /* Don't try different alignment for error_mark_node.  */
+  if (! DECL_USER_ALIGN (decl) && TREE_TYPE (decl) != error_mark_node)
     {
 #ifdef DATA_ABI_ALIGNMENT
       unsigned int data_abi_align
