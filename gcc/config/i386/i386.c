@@ -5628,6 +5628,18 @@ ix86_function_ok_for_sibcall (tree decl, tree exp)
       if (!decl
 	  || (TARGET_DLLIMPORT_DECL_ATTRIBUTES && DECL_DLLIMPORT_P (decl)))
 	{
+	  /* Indirect sibcall is OK if there are variable arguments or
+	     no arguments.  */
+	  tree arglist = TYPE_ARG_TYPES (type);
+	  if (arglist == NULL || arglist == void_list_node)
+	    return true;
+
+	  for (tree t = arglist; t && t != void_list_node;
+	       t = TREE_CHAIN (t))
+	    if (TYPE_MAIN_VARIANT (TREE_VALUE (t))
+		== TYPE_MAIN_VARIANT (va_list_type_node))
+	      return true;
+
 	  if (ix86_function_regparm (type, NULL) >= 3)
 	    {
 	      /* ??? Need to count the actual number of registers to be used,
